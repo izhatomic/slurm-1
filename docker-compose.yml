@@ -1,0 +1,23 @@
+version: '3'
+services:
+  nginx:
+    build: nginx/
+    ports:
+      - "80:80"
+    depends_on:
+      - fpm
+      - db
+  fpm:
+    image: php:fpm
+#      ports:
+#          - ":9000"
+    volumes:
+      - /root/slurm-1/site/:/var/www/html/site/
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - /root/slurm-1/mysql/data/:/var/lib/mysql/
