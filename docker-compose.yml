@@ -13,14 +13,16 @@ services:
     networks:
       network-1:
         ipv4_address: 10.0.1.11
+    restart: always
   fpm:
-    image: php:fpm
+    build: build/php/
     container_name: fpm
     volumes:
       - /home/website/mysite/:/var/www/html/site/
     networks:
       network-1:
         ipv4_address: 10.0.1.21
+    restart: always
   db:
     image: mysql
     container_name: mysql
@@ -33,6 +35,14 @@ services:
     networks:
       network-1:
         ipv4_address: 10.0.1.31
+    restart: always
+  memcached:
+    image: memcached:latest
+    container_name: memcached
+    networks:
+      network-1:
+        ipv4_address: 10.0.1.41
+    restart: always
 
 networks:
   network-1:
