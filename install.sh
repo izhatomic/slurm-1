@@ -8,6 +8,10 @@ fi
 
 yum install epel-release -y
 yum install openssh-server openssh-clients -y
+yum install docker docker-ce docker-compose
+
+systemctl start docker
+systemctl enable docker
 
 # Создаем группу для доступа по SFTP
 groupadd sftpg
@@ -44,6 +48,7 @@ cat > /usr/bin/set_nginx_iptables.sh <<EOF
 #!/bin/bash
 iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 iptables -I INPUT -p tcp --dport 443 -j ACCEPT
+iptables -I INPUT -i eth0 -p tcp --dport 3306 -j DROP
 EOF
 
 chmod +x /usr/bin/set_nginx_iptables.sh
@@ -80,7 +85,7 @@ chown nobody:nobody /opt/www/${site_name}/html/wp-config.php
 mkdir -p /var/log/php
 mkdir -p /var/log/mysql
 chown -R root:dockerroot /var/log/nginx /var/log/php 
-chown -R root:polkitd /var/log/mysql
+chown -R polkitd:polkitd /var/log/mysql
 
 yum install letsencrypt -y
 mkdir -p /opt/www/acme

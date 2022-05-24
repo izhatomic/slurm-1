@@ -38,6 +38,8 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: example
+    ports:
+      - 3306:3306
     volumes:
       - /opt/www/slurm1.myvds.site-db/:/var/lib/mysql/
       - /var/log/mysql/:/var/log/mysql/
