@@ -90,3 +90,20 @@ chown -R polkitd:polkitd /var/log/mysql
 yum install letsencrypt -y
 mkdir -p /opt/www/acme
 letsencrypt certonly --webroot -w /opt/www/acme -d ${site_name}
+
+
+
+cat > /etc/systemd/system/${site_name}.service <<EOF
+[Unit]
+Description=Service for ${site_name}
+After=network.target
+[Service]
+Type=simple
+ExecStart=docker-compose -f /root/slurm1/docker-compose.yml up
+[Install]
+WantedBy=multi-user.target
+EOF
+
+chmod 644 /etc/systemd/system/${site_name}.service
+systemctl daemon-reload
+systemctl enable ${site_name}
