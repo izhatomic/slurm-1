@@ -1,0 +1,10 @@
+[PHP]
+file_uploads = On
+upload_max_filesize = 2M
+max_file_uploads = 20
+
+[Session]
+session.save_handler = memcached
+session.save_path = "memcached:11211"
+
+extension=mysql.so
