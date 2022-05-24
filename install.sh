@@ -12,15 +12,19 @@ yum install openssh-server openssh-clients -y
 # Создаем группу для доступа по SFTP
 groupadd sftpg
 
-# Создаем пользователей для доступа к файлам сайта и БД
-useradd -g sftpg ${site_name}
-useradd -g sftpg mysqldb
+mkdir /opt/www
+mkdir /opt/www/${site_name}
+mkdir /opt/www/${site_name}-db
+chown -R root:root /opt/www
+chmod -R 755 /opt/www
 
-# Создаем каталоги для сайта и БД
-mkdir -p /opt/www/${site_name}
-mkdir -p /opt/www/mysqldb
-chown -R root:sftpg /opt/www/${site_name}
-chown -R root:sftpg /opt/www/mysqldb
+useradd -d /opt/www/${site_name} -p ftp123 ${site_name}
+usermod -a -G sftpg ${site_name}
+mkdir /opt/www/${site_name}/html
+chown ${site_name}:${site_name} /opt/www/${site_name}/html
+
+useradd -d /opt/www/${site_name}-db -p ftp321 ${site_name}-db
+usermod -a -G sftpg ${site_name}-db
 
 # Создаем настройки для пользователей SFTP
 cat>>/etc/ssh/sshd_config<<EOF
@@ -66,11 +70,12 @@ wget -O /tmp/wp.tar.gz -c http://wordpress.org/latest.tar.gz
 tar -xzvf /tmp/wp.tar.gz -C /tmp/
 
 Копируем в папку веб-сервера:
-rsync -av /tmp/wordpress/* /opt/www/${site_name}/
+rsync -av /tmp/wordpress/* /opt/www/${site_name}/html/
 
 rm -rf /tmp/wp.tar.gz /tmp/wordpress
 
-cp ./main/wp-config.php
+cp ./main/wp-config.php /opt/www/${site_name}/html/
+chown nobody:nobody /opt/www/${site_name}/html/wp-config.php
 
 mkdir -p /var/log/php
 mkdir -p /var/log/mysql

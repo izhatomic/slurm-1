@@ -11,7 +11,7 @@ services:
       - /var/log/nginx/:/var/log/nginx/
       - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./conf/nginx/conf.d/:/etc/nginx/conf.d/:ro
-      - /home/website/mysite/:/var/www/html/site/
+      - /opt/www/slurm1.myvds.site/html/:/var/www/html/site/
     networks:
       network-1:
         ipv4_address: 10.0.1.11
@@ -21,10 +21,9 @@ services:
     build: build/php/
     container_name: fpm
     volumes:
-      - /home/website/mysite/:/var/www/html/site/
+      - /opt/www/slurm1.myvds.site/html/:/var/www/html/site/
       - /var/log/php/:/var/log/php/
       - ./conf/php/php.ini:/usr/local/etc/php/php.ini:ro
-#      - ./conf/php/fpm.pool.d/domain.conf:/usr/local/etc/php-fpm.d/domain.conf:ro
     networks:
       network-1:
         ipv4_address: 10.0.1.21
@@ -37,14 +36,12 @@ services:
     image: mysql
     container_name: mysql
     command: --default-authentication-plugin=mysql_native_password
-#    command: --init-file /data/application/init.sql
     environment:
       MYSQL_ROOT_PASSWORD: example
     volumes:
-      - /home/website/mysite-db/:/var/lib/mysql/
+      - /opt/www/slurm1.myvds.site-db/:/var/lib/mysql/
       - /var/log/mysql/:/var/log/mysql/
       - ./conf/mysql/conf.d/:/etc/mysql/conf.d/:ro
-#      - ./conf/mysql/init.sql:/data/application/init.sql
       - ./conf/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       network-1:
